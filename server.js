@@ -55,7 +55,11 @@ app.use("/api/v1/job-assign", jobAssigningRoute);
 app.use("/api/v1/chats", chatsRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/notifications", notificationsRoute);
-app.use("/", rootRouter);
+// app.use("/", rootRouter);
+
+app.get("/",(req,res)=>{
+  res.send("<h1>saas CRM</h1>")
+})
 
 // app.use(function (err, req, res, next) {
 //      console.error(err.stack);
