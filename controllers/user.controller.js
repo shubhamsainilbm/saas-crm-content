@@ -277,7 +277,9 @@ export const updateOwnUser = async (req, res) => {
     user.bankAccountNumber = bankAccountNumber;
     user.ifseCode = ifseCode;
     user.panNumber = panNumber;
-    user.image = `${process.env.BASE_URL}/uploads/${req?.file?.filename}`;
+    if (req?.file?.filename) {
+      user.image = `${process.env.BASE_URL}/uploads/${req?.file?.filename}`;
+    }
     await user.save();
 
     res.json("update");
