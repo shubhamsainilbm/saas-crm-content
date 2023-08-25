@@ -73,8 +73,8 @@ export const loginController = async (req, res) => {
     // Create Cookies
     res.cookie("jwt", refershToken, {
       httpOnly: true,
-      // secure: true,
-      // sameSite: "None",
+      secure: true,
+      sameSite: "None",
       expires: new Date(Date.now() + 900000),
     });
 
