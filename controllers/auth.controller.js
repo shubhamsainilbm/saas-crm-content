@@ -55,7 +55,7 @@ export const loginController = async (req, res) => {
       },
       process.env.ACCESS_TOKEN,
       {
-        expiresIn: "15m",
+        expiresIn: "7d",
       }
     );
 
@@ -66,15 +66,15 @@ export const loginController = async (req, res) => {
       },
       process.env.REFRESH_TOKEN,
       {
-        expiresIn: "1d",
+        expiresIn: "7d",
       }
     );
 
     // Create Cookies
     res.cookie("jwt", refershToken, {
       httpOnly: true,
-      // secure: true,
-      // sameSite: "None",
+      secure: true,
+      sameSite: "None",
       expires: new Date(Date.now() + 900000),
     });
 
@@ -123,7 +123,7 @@ export const refreshToken = async (req, res) => {
       },
       process.env.ACCESS_TOKEN,
       {
-        expiresIn: "15m",
+        expiresIn: "7d",
       }
     );
 
