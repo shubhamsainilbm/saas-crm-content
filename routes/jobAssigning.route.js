@@ -9,7 +9,7 @@ import uploadBlogDocument from "../middleware/uploadBlogDocument.js";
 
 const router = Router();
 router.use(verifyJWT);
-router.put(
+router.post(
   "/create-job-assigning",
   uploadGrammarlyScreenshoot.fields([
     {

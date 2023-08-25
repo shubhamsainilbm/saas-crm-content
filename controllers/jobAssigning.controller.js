@@ -34,7 +34,6 @@ export const createJobAssigning = async (req, res) => {
     grammarlyScreenshot,
   } = req.body;
   try {
-    // console.log(req?.files?.blogDocument[0].filename);
     if (!id || !allocatedTo || !evaluatedBy) {
       return res.status(400).json({
         success: false,
@@ -47,6 +46,7 @@ export const createJobAssigning = async (req, res) => {
 
     let jobAssignings = await jobAssigningModel.findOne({ jobId: id });
 
+    // console.log(grammarlyScreenshot);
     jobAssignings.allocatedTo = allocatedTo;
     jobAssignings.evaluatedBy = evaluatedBy;
     jobAssignings.wordCount = wordCount;
@@ -55,6 +55,13 @@ export const createJobAssigning = async (req, res) => {
     jobAssignings.amount = amount;
     jobAssignings.url = url;
     jobAssignings.paidOn = paidOn;
+    if (grammarlyScreenshot) {
+      jobAssignings.grammarlyScreenshot = grammarlyScreenshot;
+    }
+
+    if (blogDocument) {
+      jobAssignings.blogDocument = blogDocument;
+    }
 
     if (req?.files.grammarlyScreenshot) {
       jobAssignings = await jobAssigningModel.findByIdAndUpdate(
@@ -65,6 +72,21 @@ export const createJobAssigning = async (req, res) => {
           },
         }
       );
+      jobAssignings.allocatedTo = allocatedTo;
+      jobAssignings.evaluatedBy = evaluatedBy;
+      jobAssignings.wordCount = wordCount;
+      jobAssignings.scoreGivenByEvaluator = userDefaultPayOut.defaultPayOut;
+      jobAssignings.dateOfPublishing = dateOfPublishing;
+      jobAssignings.amount = amount;
+      jobAssignings.url = url;
+      jobAssignings.paidOn = paidOn;
+      if (grammarlyScreenshot) {
+        jobAssignings.grammarlyScreenshot = grammarlyScreenshot;
+      }
+
+      if (blogDocument) {
+        jobAssignings.blogDocument = blogDocument;
+      }
     }
     if (req?.files.blogDocument) {
       jobAssignings = await jobAssigningModel.findByIdAndUpdate(
@@ -75,14 +97,23 @@ export const createJobAssigning = async (req, res) => {
           },
         }
       );
+      jobAssignings.allocatedTo = allocatedTo;
+      jobAssignings.evaluatedBy = evaluatedBy;
+      jobAssignings.wordCount = wordCount;
+      jobAssignings.scoreGivenByEvaluator = userDefaultPayOut.defaultPayOut;
+      jobAssignings.dateOfPublishing = dateOfPublishing;
+      jobAssignings.amount = amount;
+      jobAssignings.url = url;
+      jobAssignings.paidOn = paidOn;
+      if (grammarlyScreenshot) {
+        jobAssignings.grammarlyScreenshot = grammarlyScreenshot;
+      }
+
+      if (blogDocument) {
+        jobAssignings.blogDocument = blogDocument;
+      }
     }
-    // console.log(grammarlyScreenshot);
-    if (grammarlyScreenshot) {
-      jobAssignings.grammarlyScreenshot = grammarlyScreenshot;
-    }
-    if (blogDocument) {
-      jobAssignings.blogDocument = blogDocument;
-    }
+    console.log({ jobAssignings });
     await jobAssignings.save();
 
     const job = await jobsModel.findOne({ _id: id });

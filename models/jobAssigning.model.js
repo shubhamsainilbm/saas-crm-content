@@ -26,8 +26,8 @@ const JobAssigningSchema = new mongoose.Schema(
     paidOn: {
       type: String,
     },
-    blogDocument: [{ type: Object }],
-    grammarlyScreenshot: [{ type: Object }],
+    blogDocument: [{ type: String }],
+    grammarlyScreenshot: [{ type: String }],
     activeMember: {
       type: String,
     },
