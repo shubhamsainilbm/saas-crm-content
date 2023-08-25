@@ -4,11 +4,9 @@ const JobAssigningSchema = new mongoose.Schema(
   {
     allocatedTo: {
       type: String,
-      require: true,
     },
     evaluatedBy: {
       type: String,
-      require: true,
     },
     wordCount: {
       type: String,
@@ -28,12 +26,8 @@ const JobAssigningSchema = new mongoose.Schema(
     paidOn: {
       type: String,
     },
-    blogDocument: {
-      type: String,
-    },
-    grammarlyScreenshot: {
-      type: String,
-    },
+    blogDocument: [{ type: Object }],
+    grammarlyScreenshot: [{ type: Object }],
     activeMember: {
       type: String,
     },

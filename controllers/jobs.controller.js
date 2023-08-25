@@ -97,8 +97,8 @@ export const createJob = async (req, res) => {
         amount: "",
         url: "",
         paidOn: "",
-        blogDocument: "",
-        grammarlyScreenshot: "",
+        blogDocument: [{}],
+        grammarlyScreenshot: [{}],
         activeMember: "",
       });
     }

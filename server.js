@@ -37,7 +37,7 @@ const io = new Server(server, {
 });
 
 app.use(express.json({ limit: "50MB" }));
-app.use(express.static("./client"));
+app.use(express.static("./public"));
 app.use(express.urlencoded({ limit: "50MB", extended: true }));
 app.use(logger);
 app.use(cors(corsOptions));
@@ -57,9 +57,9 @@ app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/notifications", notificationsRoute);
 // app.use("/", rootRouter);
 
-app.get("/",(req,res)=>{
-  res.send("<h1>saas CRM</h1>")
-})
+app.get("/", (req, res) => {
+  res.send("<h1>Hello From Server!</h1>");
+});
 
 // app.use(function (err, req, res, next) {
 //      console.error(err.stack);

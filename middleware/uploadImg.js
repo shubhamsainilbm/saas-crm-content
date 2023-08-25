@@ -1,7 +1,7 @@
 import multer from "multer";
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    return cb(null, "client/uploads");
+    return cb(null, "public/uploads/users-images");
   },
   filename: (req, file, cb) => {
     return cb(null, `${Date.now()}-${file.originalname}`);
