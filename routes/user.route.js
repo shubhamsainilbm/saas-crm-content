@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createUser,
+  dashBoardStack,
   deleteUser,
   forceDeleteUser,
   getAllAuthorAndEvaluator,
@@ -38,6 +39,7 @@ router.get("/get-user", getUser);
 router.get("/get-author-and-evaluator", getAllAuthorAndEvaluator);
 router.delete("/delete-user", deleteUser);
 router.delete("/force-delete-user", forceDeleteUser);
-router.get("/get-chat-users", getChatUsers);
+router.get("/get-chat-users/:key/:id", getChatUsers);
+router.get("/dashboard-stack", dashBoardStack);
 
 export default router;

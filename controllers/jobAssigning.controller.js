@@ -42,15 +42,18 @@ export const createJobAssigning = async (req, res) => {
     }
 
     const userDefaultPayOut = await userModel.findOne({ email: allocatedTo });
-    console.log("first", userDefaultPayOut.defaultPayOut);
 
     let jobAssignings = await jobAssigningModel.findOne({ jobId: id });
 
     // console.log(grammarlyScreenshot);
+    userDefaultPayOut.defaultPayOut = scoreGivenByEvaluator;
+    await userDefaultPayOut.save();
     jobAssignings.allocatedTo = allocatedTo;
     jobAssignings.evaluatedBy = evaluatedBy;
     jobAssignings.wordCount = wordCount;
-    jobAssignings.scoreGivenByEvaluator = userDefaultPayOut.defaultPayOut;
+    jobAssignings.scoreGivenByEvaluator = scoreGivenByEvaluator
+      ? scoreGivenByEvaluator
+      : userDefaultPayOut.defaultPayOut;
     jobAssignings.dateOfPublishing = dateOfPublishing;
     jobAssignings.amount = amount;
     jobAssignings.url = url;
@@ -75,7 +78,9 @@ export const createJobAssigning = async (req, res) => {
       jobAssignings.allocatedTo = allocatedTo;
       jobAssignings.evaluatedBy = evaluatedBy;
       jobAssignings.wordCount = wordCount;
-      jobAssignings.scoreGivenByEvaluator = userDefaultPayOut.defaultPayOut;
+      jobAssignings.scoreGivenByEvaluator = scoreGivenByEvaluator
+        ? scoreGivenByEvaluator
+        : userDefaultPayOut.defaultPayOut;
       jobAssignings.dateOfPublishing = dateOfPublishing;
       jobAssignings.amount = amount;
       jobAssignings.url = url;
@@ -100,7 +105,9 @@ export const createJobAssigning = async (req, res) => {
       jobAssignings.allocatedTo = allocatedTo;
       jobAssignings.evaluatedBy = evaluatedBy;
       jobAssignings.wordCount = wordCount;
-      jobAssignings.scoreGivenByEvaluator = userDefaultPayOut.defaultPayOut;
+      jobAssignings.scoreGivenByEvaluator = scoreGivenByEvaluator
+        ? scoreGivenByEvaluator
+        : userDefaultPayOut.defaultPayOut;
       jobAssignings.dateOfPublishing = dateOfPublishing;
       jobAssignings.amount = amount;
       jobAssignings.url = url;
@@ -115,10 +122,27 @@ export const createJobAssigning = async (req, res) => {
     }
     console.log({ jobAssignings });
     await jobAssignings.save();
-
+    const findEvalu = await jobAssigningModel.findOne({
+      jobId: id,
+    });
+    console.log(findEvalu.grammarlyScreenshot.length);
     const job = await jobsModel.findOne({ _id: id });
     job.assignJob.author = allocatedTo;
-    job.assignJob.evaluator = evaluatedBy;
+
+    job.assignJob.evaluator = {
+      evaluatedBy,
+      gScreenShoot: findEvalu.grammarlyScreenshot.length === 0 ? false : true,
+      blogDoc: findEvalu.blogDocument.length === 0 ? false : true,
+    };
+    console.log("first", jobAssignings.grammarlyScreenshot.length);
+    job.dateOfPublishing = jobAssignings.dateOfPublishing;
+    job.pendingOnDesk =
+      jobAssignings.allocatedTo !== ""
+        ? (job.pendingOnDesk = "author")
+        : jobAssignings.allocatedTo !== "" ||
+          jobAssignings.grammarlyScreenshot.length > 0
+        ? (job.pendingOnDesk = "evaluator")
+        : job.pendingOnDesk;
     job.assignJobId = jobAssignings._id;
     await job.save();
 

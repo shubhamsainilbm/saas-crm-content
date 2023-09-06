@@ -118,18 +118,63 @@ export const createUser = async (req, res) => {
       subject: "SUBJECT",
       text: "EMAIL BODY",
       html: `
-      <div>
-      <h5>Username: ${email}</h5>
-      <h5>Password: ${password}</h5>
-      </div>      
+      <!DOCTYPE html>
+<html>
+
+<head>
+    <title>Page Title</title>
+</head>
+
+
+
+<body style="font-family: 'Poppins', sans-serif !important;">
+
+    <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <div style="justify-content: center; width: 800px; margin: auto;">
+            <div style="box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;">
+                <div style="background-color: white; padding: 0.5rem;">
+                    <img src="../../public/images/logo.png" alt="img" class="img-fluid" style="height: 39px;">
+                </div>
+
+                <div style="background-color: #d8e8f0; padding: 3rem; text-align: center;">
+                    <img src={"../../public/images/mail.png"} alt="img" class="mb-4 img-fluid">
+
+
+                    <h1 style="color: #000;
+                        font-size: 30px;
+                        font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">Welcome</h1>
+                    <h2 style=" color: #28a6fa;
+                        font-size: 22px; margin-bottom: 1.5rem;">
+                        *${email}*
+                    </h2>
+
+                    <p style="color: #000;
+                        font-weight: 500;
+                        font-size: 15px;">
+                        Thanks for signing up for our updates. We'll be sending an occasional email. with everything
+                        new and good that you'll probably want to know about: new products, Lorem , Lorem.
+                    </p>
+                    <p style="border-bottom: 1px dashed #28a6fa;">
+                        Your Password is: <span style="color: #000;
+                            font-weight: 700;
+                            font-size: 15px;">${password}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+</body>
+
+</html>
       `,
     };
     req.body.image = "";
     const user = await userModel.create(req.body);
     if (user || role === findPermissionID.permissionRole) {
       await userPermissionasModel.create({
-        userId: user._id,
-        permissionId: findPermissionID._id,
+        userId: user?._id,
+        permissionId: findPermissionID?._id,
         permissionRole: findPermissionID.permissionRole,
         permissionType: findPermissionID.permissionType,
       });
@@ -368,6 +413,7 @@ export const forceDeleteUser = async (req, res) => {
 // Get User for Chat
 
 export const getChatUsers = async (req, res) => {
+  const { key, id } = req.params;
   try {
     const keyword = req.query.search
       ? {
@@ -377,19 +423,65 @@ export const getChatUsers = async (req, res) => {
           ],
         }
       : {};
-
-    const users = await userModel.find(keyword).find({
-      _id: { $ne: req.userId },
-      role: { $ne: "admin" },
-      role:
-        req.role === "keyword-analyst" || req.role === "evaluator"
-          ? { $eq: "author" }
-          : req.role === "author"
-          ? { $eq: "keyword-analyst" }
-          : "No User Found",
+    const job = await jobsModel.findOne({ _id: id });
+    console.log("job.assignJob.author", job?.assignJob?.author);
+    // const users = await userModel
+    //   .find(keyword)
+    //   .find({
+    //     _id: { $ne: req.userId },
+    //     role: { $ne: "admin" },
+    //     role:
+    //       req.role === "keyword-analyst" || req.role === "evaluator"
+    //         ? { $eq: "author" }
+    //         : req.role === "author"
+    //         ? { $in: ["keyword-analyst", "evaluator"] }
+    //         : "No User Found",
+    //   })
+    //   .where("activeUser")
+    //   .equals(true)
+    //   .findOne({ email: job?.assignJob?.author });
+    const findUserId = await userModel.findOne({ _id: job?.createdBy });
+    console.log(findUserId.email);
+    const users = await userModel.findOne({
+      email:
+        req.role === "keyword-analyst" ||
+        req.role === "admin" ||
+        req.role === "evaluator"
+          ? job?.assignJob?.author
+          : req.role === "author" || (req.role === "admin" && key === "KA")
+          ? findUserId.email
+          : req.role === "author" || (req.role === "admin" && key === "EA")
+          ? job?.assignJob?.evaluator?.evaluatedBy
+          : "",
     });
+    console.log("first", users);
+
     res.json(users);
   } catch (error) {
     console.log(error);
   }
+};
+
+export const dashBoardStack = async (req, res) => {
+  const findUsers = await userModel.find();
+  const authorAc = (findUsers.role = "author");
+  const totalJobs = await jobsModel.find().lean();
+  // console.log(authorAc.length);
+  // console.log(findUsers.length);
+  const arrayJob = [];
+  totalJobs?.find((items, i) => {
+    // console.log(items.createdBy == req.userId && items.length);
+    if (items.createdBy == req?.userId) arrayJob.push(items);
+  });
+  // console.log(totalJobs);
+  console.log("first", arrayJob.length);
+  req.role === "admin"
+    ? res.json({
+        totalAuthor: authorAc.length,
+        totalUsers: findUsers.length,
+        totalJobs: totalJobs.length,
+      })
+    : res.json({
+        totalJobs: arrayJob.length,
+      });
 };

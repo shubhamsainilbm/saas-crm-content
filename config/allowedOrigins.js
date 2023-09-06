@@ -14,6 +14,8 @@ const allowedOrigins = [
   "http://192.168.11.59:5173",
   "http://127.0.0.1:5173",
   "https://csaas.lbmdemo.com",
+  "http://192.168.11.36:5173",
+  "http://192.168.11.13:5173",
 ];
 
 export default allowedOrigins;

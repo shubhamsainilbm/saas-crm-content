@@ -2,7 +2,7 @@ import chatsModel from "../models/chats.model.js";
 import userModel from "../models/user.model.js";
 
 export const createChats = async (req, res) => {
-  const { userId } = req.body;
+  const { userId, jobId } = req.body;
   try {
     if (!userId) {
       return res.status(400).json({ message: "User id is required" });
@@ -13,6 +13,7 @@ export const createChats = async (req, res) => {
         $and: [
           { users: { $elemMatch: { $eq: req.userId } } },
           { users: { $elemMatch: { $eq: userId } } },
+          { jobId: { $eq: jobId } },
         ],
       })
       .populate("users", "-password")
@@ -28,6 +29,7 @@ export const createChats = async (req, res) => {
       let chatData = {
         chatName: "sender",
         users: [req.userId, userId],
+        jobId: jobId,
       };
 
       try {
@@ -47,6 +49,7 @@ export const createChats = async (req, res) => {
 };
 
 export const getChats = async (req, res) => {
+  // const { userId, jobId } = req.body;
   try {
     chatsModel
       .find({ users: { $elemMatch: { $eq: req.userId } } })

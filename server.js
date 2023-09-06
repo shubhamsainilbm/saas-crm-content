@@ -94,7 +94,7 @@ io.on("connection", (socket) => {
   socket.on("sendMessage", (newMessageRecived) => {
     let chat = newMessageRecived.chat;
 
-    console.log(chat);
+    console.log("chat", chat);
     // console.log(newMessageRecived.sender._id);
 
     if (!chat.users) return console.log("Chat user is not define");

@@ -12,6 +12,10 @@ const ChatsSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    jobId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Job",
+    },
     latestMessage: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",

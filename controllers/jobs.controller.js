@@ -70,12 +70,12 @@ export const createJob = async (req, res) => {
         .json({ success: false, message: "All fileds are required" });
     }
 
-    const jobKeywordDuplicate = await jobsModel.findOne({
+    const blogTitleDuplicate = await jobsModel.findOne({
       blogTitle: blogTitle,
     });
 
-    if (jobKeywordDuplicate) {
-      return res.status(400).json({ message: "Duplicat Keywords" });
+    if (blogTitleDuplicate) {
+      return res.status(400).json({ message: "Duplicate Blog Title" });
     }
 
     req.body.createdBy = req.userId;
@@ -126,14 +126,14 @@ export const csvCreateJob = async (req, res) => {
     let csvStream = fastcsv
       .parse()
       .validate(function (data) {
-        console.log("data", data);
+        // console.log("data", data);
         return data;
       })
       .on("data-invalid", function (data) {
-        console.log("datasss", data);
+        // console.log("datasss", data);
       })
       .on("data", function (data) {
-        // console.log("sds",data);
+        console.log("sds", JSON.parse(data[4]));
 
         csvData.push({
           keyword: data[0],

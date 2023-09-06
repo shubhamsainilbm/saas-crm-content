@@ -49,6 +49,7 @@ export const loginController = async (req, res) => {
           userId: isUserCheck._id,
           userName: isUserCheck.name,
           userEmail: isUserCheck.email,
+          userImage: isUserCheck.image,
           userRole: isUserCheck.role,
           permissions: isUserPermissoins.permissionType,
         },
@@ -73,8 +74,8 @@ export const loginController = async (req, res) => {
     // Create Cookies
     res.cookie("jwt", refershToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      // secure: true,
+      // sameSite: "None",
       expires: new Date(Date.now() + 900000),
     });
 
@@ -117,6 +118,7 @@ export const refreshToken = async (req, res) => {
           userId: isUserCheck._id,
           userName: isUserCheck.name,
           userEmail: isUserCheck.email,
+          userImage: isUserCheck.image,
           userRole: isUserCheck.role,
           permissions: isUserPermissoins.permissionType,
         },

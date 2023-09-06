@@ -3,7 +3,7 @@ import { formatDate } from "../functions/dateFunction.js";
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
     console.log("file", file);
-    if (file.mimetype === "image/png") {
+    if (file.mimetype === "image/png" || file.mimetype === "image/jpeg") {
       return cb(null, "public/uploads/grammarlyScreenshots");
     } else {
       return cb(null, "public/uploads/blogDocument");
