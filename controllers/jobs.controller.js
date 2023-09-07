@@ -133,7 +133,7 @@ export const csvCreateJob = async (req, res) => {
         // console.log("datasss", data);
       })
       .on("data", function (data) {
-        console.log("sds", JSON.parse(data[4]));
+        // console.log("sds", JSON.parse(data[4]));
 
         csvData.push({
           keyword: data[0],
