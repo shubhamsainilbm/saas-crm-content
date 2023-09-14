@@ -172,9 +172,9 @@ export const createJobAssigning = async (req, res) => {
         jobAssignings.scoreGivenByEvaluator !== ""
       ? (job.pendingOnDesk = "analyst")
       : "";
-    job.pendingOnDesk === "author" && jobAssignings.allocatedTo !== ""
+    job.pendingOnDesk === `author - ${authorEmail.name}` && jobAssignings.allocatedTo !== ""
       ? (job.status = "started")
-      : job.pendingOnDesk === "evaluator" &&
+      : job.pendingOnDesk === `evaluator - ${evaluatedByEmail.name}` &&
         job?.assignJob?.evaluator?.evaluatedBy !== false &&
         job?.assignJob?.evaluator?.blogDoc !== false
       ? (job.status = "in-progress")
