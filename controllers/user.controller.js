@@ -246,6 +246,7 @@ export const updateUser = async (req, res) => {
     //   runValidators: true,
     // });
     // const hashPWD = await bcrypt.hash(password, 10);
+
     user.name = name;
     user.email = email;
     user.mobile = mobile;
@@ -463,9 +464,14 @@ export const getChatUsers = async (req, res) => {
 };
 
 export const dashBoardStack = async (req, res) => {
-  const findUsers = await userModel.find();
-  const authorAc = (findUsers.role = "author");
+  const findUsers = await userModel.countDocuments({
+    $and: [{ activeUser: true }, { role: "author" }],
+  });
+
   const totalJobs = await jobsModel.find().lean();
+  const activeJobs = await jobsModel.countDocuments({
+    status: "complete",
+  });
   // console.log(authorAc.length);
   // console.log(findUsers.length);
   const arrayJob = [];
@@ -477,11 +483,13 @@ export const dashBoardStack = async (req, res) => {
   console.log("first", arrayJob.length);
   req.role === "admin"
     ? res.json({
-        totalAuthor: authorAc.length,
-        totalUsers: findUsers.length,
         totalJobs: totalJobs.length,
+        totalActiveJobs: activeJobs,
+        totalAuthor: findUsers,
       })
     : res.json({
-        totalJobs: arrayJob.length,
+        totalJobs: totalJobs.length,
+        totalActiveJobs: activeJobs,
+        totalAuthor: findUsers,
       });
 };

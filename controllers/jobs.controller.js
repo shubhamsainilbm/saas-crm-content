@@ -267,3 +267,35 @@ export const updateJob = async (req, res) => {
     console.log(error);
   }
 };
+
+export const jobStatus = async (req, res) => {
+  try {
+    // const jobNotStarted = await jobAssigningModel.countDocuments({
+    //   $or: [{ allocatedTo: { $in: "" } }, { evaluatedBy: { $in: "" } }],
+    // });
+    // let jobInProgress = await jobAssigningModel.count();
+    // jobInProgress = jobInProgress - jobNotStarted;
+    // console.log(jobInProgress);
+    const jobNotStarted = await jobsModel.countDocuments({
+      status: "not-started",
+    });
+    const jobStarted = await jobsModel.countDocuments({
+      status: "started",
+    });
+    const jobInProgress = await jobsModel.countDocuments({
+      status: "in-progress",
+    });
+    const jobComplete = await jobsModel.countDocuments({
+      status: "complete",
+    });
+
+    console.log(jobNotStarted);
+    console.log(jobStarted);
+    console.log(jobInProgress);
+    console.log(jobComplete);
+    res.json({ jobNotStarted, jobStarted, jobInProgress, jobComplete });
+    // "evaluator@gmail.com"
+  } catch (error) {
+    console.log(error);
+  }
+};

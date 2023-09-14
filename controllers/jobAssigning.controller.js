@@ -55,7 +55,9 @@ export const createJobAssigning = async (req, res) => {
       ? scoreGivenByEvaluator
       : userDefaultPayOut.defaultPayOut;
     jobAssignings.dateOfPublishing = dateOfPublishing;
-    jobAssignings.amount = amount;
+    jobAssignings.amount = Math.round(
+      Number(jobAssignings.scoreGivenByEvaluator * jobAssignings.wordCount)
+    );
     jobAssignings.url = url;
     jobAssignings.paidOn = paidOn;
     if (grammarlyScreenshot) {
@@ -82,7 +84,9 @@ export const createJobAssigning = async (req, res) => {
         ? scoreGivenByEvaluator
         : userDefaultPayOut.defaultPayOut;
       jobAssignings.dateOfPublishing = dateOfPublishing;
-      jobAssignings.amount = amount;
+      jobAssignings.amount = Number(
+        jobAssignings.scoreGivenByEvaluator * jobAssignings.wordCount
+      );
       jobAssignings.url = url;
       jobAssignings.paidOn = paidOn;
       if (grammarlyScreenshot) {
@@ -105,11 +109,14 @@ export const createJobAssigning = async (req, res) => {
       jobAssignings.allocatedTo = allocatedTo;
       jobAssignings.evaluatedBy = evaluatedBy;
       jobAssignings.wordCount = wordCount;
-      jobAssignings.scoreGivenByEvaluator = scoreGivenByEvaluator
-        ? scoreGivenByEvaluator
-        : userDefaultPayOut.defaultPayOut;
+      // jobAssignings.scoreGivenByEvaluator = scoreGivenByEvaluator
+      //   ? scoreGivenByEvaluator
+      //   : userDefaultPayOut.defaultPayOut;
+      jobAssignings.scoreGivenByEvaluator = scoreGivenByEvaluator;
       jobAssignings.dateOfPublishing = dateOfPublishing;
-      jobAssignings.amount = amount;
+      jobAssignings.amount = Number(
+        jobAssignings.scoreGivenByEvaluator * jobAssignings.wordCount
+      );
       jobAssignings.url = url;
       jobAssignings.paidOn = paidOn;
       if (grammarlyScreenshot) {
@@ -134,16 +141,46 @@ export const createJobAssigning = async (req, res) => {
       gScreenShoot: findEvalu.grammarlyScreenshot.length === 0 ? false : true,
       blogDoc: findEvalu.blogDocument.length === 0 ? false : true,
     };
-    console.log("first", jobAssignings.grammarlyScreenshot.length);
+    // console.log("first", jobAssignings.grammarlyScreenshot.length);
     job.dateOfPublishing = jobAssignings.dateOfPublishing;
-    job.pendingOnDesk =
-      jobAssignings.allocatedTo !== ""
-        ? (job.pendingOnDesk = "author")
-        : jobAssignings.allocatedTo !== "" ||
-          jobAssignings.grammarlyScreenshot.length > 0
-        ? (job.pendingOnDesk = "evaluator")
-        : job.pendingOnDesk;
-    job.assignJobId = jobAssignings._id;
+    console.log(
+      "jobAssignings.jobAssignings.allocatedTo !==",
+      jobAssignings.grammarlyScreenshot.length > 0
+    );
+    // if (jobAssignings.allocatedTo !== "") {
+    //   jobAssignings.allocatedTo !== "" &&
+    //   jobAssignings.grammarlyScreenshot !== "" &&
+    //   jobAssignings.blogDocument.length !== ""
+    //     ? (job.pendingOnDesk = "author")
+    //     : (job.pendingOnDesk = "evaluator");
+    //   // job.pendingOnDesk = "author";
+    // }
+    // console.log(jobAssignings.grammarlyScreenshot !== "");
+    // job.pendingOnDesk =
+    //   jobAssignings.allocatedTo !== "" ? "author" : "evaluator";
+    // jobAssignings.allocatedTo !== "" && (job.pendingOnDesk = "author");
+    const authorEmail = await userModel.findOne({ email: allocatedTo });
+    const evaluatedByEmail = await userModel.findOne({ email: evaluatedBy });
+    console.log(jobAssignings.grammarlyScreenshot !== "");
+    job.pendingOnDesk === "job-allocator" && jobAssignings.allocatedTo !== ""
+      ? (job.pendingOnDesk = `author - ${authorEmail.name}`)
+      : job.pendingOnDesk === `author - ${authorEmail.name}` &&
+        job?.assignJob?.evaluator?.evaluatedBy !== false &&
+        job?.assignJob?.evaluator?.blogDoc !== false
+      ? (job.pendingOnDesk = `evaluator - ${evaluatedByEmail.name}`)
+      : job.pendingOnDesk === `evaluator - ${evaluatedByEmail.name}` &&
+        jobAssignings.scoreGivenByEvaluator !== ""
+      ? (job.pendingOnDesk = "analyst")
+      : "";
+    job.pendingOnDesk === "author" && jobAssignings.allocatedTo !== ""
+      ? (job.status = "started")
+      : job.pendingOnDesk === "evaluator" &&
+        job?.assignJob?.evaluator?.evaluatedBy !== false &&
+        job?.assignJob?.evaluator?.blogDoc !== false
+      ? (job.status = "in-progress")
+      : job.pendingOnDesk === "analyst" && jobAssignings.dateOfPublishing !== ""
+      ? (job.status = "complete")
+      : "";
     await job.save();
 
     await notificationsModel.create({

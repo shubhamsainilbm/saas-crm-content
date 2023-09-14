@@ -3,6 +3,7 @@ import {
   createJob,
   csvCreateJob,
   getAllJobs,
+  jobStatus,
   updateJob,
 } from "../controllers/jobs.controller.js";
 import verifyJWT from "../middleware/verifyJWT.middleware.js";
@@ -15,5 +16,6 @@ router.post("/create-job", createJob);
 router.post("/csv-create-job", uploadCsvFile.single("csvFile"), csvCreateJob);
 router.patch("/update-jobs", updateJob);
 router.get("/get-jobs", getAllJobs);
+router.get("/get-job-status", jobStatus);
 
 export default router;

@@ -20,6 +20,7 @@ import notificationsRoute from "./routes/notifications.route.js";
 import commentsRoute from "./routes/comments.route.js";
 import chatsRouter from "./routes/chats.route.js";
 import messageRouter from "./routes/message.route.js";
+import reportRouter from "./routes/report.route.js";
 import rootRouter from "./routes/root.router.js";
 import corsOptions from "./config/corsOptions.js";
 // connectings
@@ -55,6 +56,7 @@ app.use("/api/v1/job-assign", jobAssigningRoute);
 app.use("/api/v1/chats", chatsRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/notifications", notificationsRoute);
+app.use("/api/v1/report", reportRouter);
 // app.use("/", rootRouter);
 
 app.get("/", (req, res) => {

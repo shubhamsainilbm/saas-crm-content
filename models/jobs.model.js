@@ -49,14 +49,6 @@ const JobsSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: [
-        "not-started",
-        "testing",
-        "on-hold",
-        "awaiting-feedback,",
-        "complete",
-        "in-progress",
-      ],
       default: "not-started",
     },
     assignJob: {
