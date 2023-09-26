@@ -470,7 +470,7 @@ export const dashBoardStack = async (req, res) => {
 
   const totalJobs = await jobsModel.find().lean();
   const activeJobs = await jobsModel.countDocuments({
-    status: "complete",
+    status: { $ne: "complete" },
   });
   // console.log(authorAc.length);
   // console.log(findUsers.length);

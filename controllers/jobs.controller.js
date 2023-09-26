@@ -99,7 +99,7 @@ export const createJob = async (req, res) => {
         paidOn: "",
         blogDocument: [],
         grammarlyScreenshot: [],
-        activeMember: "",
+        activeMember: "job-allocator",
       });
     }
     res.status(201).json({
@@ -133,7 +133,7 @@ export const csvCreateJob = async (req, res) => {
         // console.log("datasss", data);
       })
       .on("data", function (data) {
-        // console.log("sds", JSON.parse(data[4]));
+        console.log("sds", data[4]);
 
         csvData.push({
           keyword: data[0],
@@ -168,6 +168,12 @@ export const csvCreateJob = async (req, res) => {
           .then((res) => {
             console.log("Inserted", res.length, "Document");
             res.filter(async (items) => {
+              console.log({ items });
+              await commentsModel.create({
+                jobId: items._id,
+                comment: comments,
+                userId: req.userId,
+              });
               await jobAssigningModel.create({
                 jobId: items._id,
                 userId: req.userId,
@@ -295,6 +301,21 @@ export const jobStatus = async (req, res) => {
     console.log(jobComplete);
     res.json({ jobNotStarted, jobStarted, jobInProgress, jobComplete });
     // "evaluator@gmail.com"
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getJobByStatus = async (req, res) => {
+  const { status } = req.query;
+  try {
+    if (!status) {
+      return res.json({ message: "Status is Required" });
+    }
+    const jobStatus = await jobsModel.find({ status: status });
+
+    console.log(jobStatus);
+    res.status(200).json({ jobStatus });
   } catch (error) {
     console.log(error);
   }
