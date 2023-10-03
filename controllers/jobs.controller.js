@@ -10,8 +10,16 @@ const __dirname = path.resolve();
 
 // Get Job
 export const getAllJobs = async (req, res) => {
+  const status = req.query.status;
   try {
-    let jobs = jobsModel.find().populate("createdBy", { name: 1 });
+    let jobs;
+    if (status) {
+      jobs = jobsModel
+        .find({ status: status })
+        .populate("createdBy", { name: 1 });
+    } else {
+      jobs = jobsModel.find().populate("createdBy", { name: 1 });
+    }
     if (jobs.length === 0) {
       return res.status(200).json({
         success: true,
@@ -22,7 +30,6 @@ export const getAllJobs = async (req, res) => {
     let limit = Number(req.query.limit);
     let skip = (page - 1) * limit;
     jobs = jobs.skip(skip).limit(limit);
-
     const myJobs = await jobs;
     res.json(myJobs);
   } catch (error) {

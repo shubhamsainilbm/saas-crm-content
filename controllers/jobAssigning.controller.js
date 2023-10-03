@@ -171,6 +171,8 @@ export const createJobAssigning = async (req, res) => {
       : job.pendingOnDesk === `evaluator - ${evaluatedByEmail.name}` &&
         jobAssignings.scoreGivenByEvaluator !== ""
       ? (job.pendingOnDesk = "analyst")
+      : job.pendingOnDesk === "analyst" && jobAssignings.dateOfPublishing !== ""
+      ? (job.pendingOnDesk = "complete")
       : "";
     job.pendingOnDesk === `author - ${authorEmail.name}` &&
     jobAssignings.allocatedTo !== ""
@@ -179,7 +181,7 @@ export const createJobAssigning = async (req, res) => {
         job?.assignJob?.evaluator?.evaluatedBy !== false &&
         job?.assignJob?.evaluator?.blogDoc !== false
       ? (job.status = "in-progress")
-      : job.pendingOnDesk === "analyst" && jobAssignings.dateOfPublishing !== ""
+      : jobAssignings.dateOfPublishing !== ""
       ? (job.status = "complete")
       : "";
     await job.save();
@@ -190,6 +192,8 @@ export const createJobAssigning = async (req, res) => {
       ? (jobAssignings.activeMember = `evaluator - ${evaluatedByEmail.name}`)
       : job.pendingOnDesk === "analyst"
       ? (jobAssignings.activeMember = "analyst")
+      : job.pendingOnDesk === "complete"
+      ? (jobAssignings.activeMember = "complete")
       : "";
     await jobAssignings.save();
 

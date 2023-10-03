@@ -449,9 +449,9 @@ export const getChatUsers = async (req, res) => {
         req.role === "admin" ||
         req.role === "evaluator"
           ? job?.assignJob?.author
-          : req.role === "author" || (req.role === "admin" && key === "KA")
+          : req.role === "author" && key === "KA"
           ? findUserId.email
-          : req.role === "author" || (req.role === "admin" && key === "EA")
+          : req.role === "author" && key === "EA"
           ? job?.assignJob?.evaluator?.evaluatedBy
           : "",
     });
